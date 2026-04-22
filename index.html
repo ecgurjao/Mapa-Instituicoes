@@ -154,6 +154,14 @@
     margin: 8px 0;
     line-height: 1.45;
   }
+  li a {
+    color: #126b78;
+    text-decoration: none;
+    font-weight: 600;
+  }
+  li a:hover {
+    text-decoration: underline;
+  }
   .buttons {
     display: flex;
     gap: 10px;
@@ -191,8 +199,7 @@
     <section class="grid">
       <div class="card map-card">
         <div class="head">
-          <h2>Mapa do Brasil</h2>
-          <div class="hint">Hover para pré-visualizar • Clique para fixar</div>
+ 
         </div>
         <div class="map-wrap">
           <svg id="mapaBrasil" viewBox="0 0 980 980" role="img" aria-label="Mapa interativo do Brasil">
@@ -214,8 +221,7 @@
         </div>
         <div class="buttons">
           <button class="primary" id="clearBtn" type="button">Limpar seleção</button>
-          <button class="soft" id="demoBtn" type="button">Ir para Paraíba</button>
-        </div>
+                  </div>
         <p class="small">Observação: caso sinta falta de algums instiuição , favor avisar: edmar.gurjao@inescbrasil.org.</p>
       </aside>
     </section>
@@ -228,13 +234,13 @@ const dados = {
     "instituicoes": [
       "UFAC",
       "IFAC",
-      "UNIR (campi e atuação regional)"
+      "UNIR"
     ]
   },
   "AL": {
     "nome": "Alagoas",
     "instituicoes": [
-      "Universidade Federal de Alagoas - U	FAL",
+      "Universidade Federal de Alagoas - UFAL",
       "Universidade do Estado de Alaguas - UNEAL",
       "Institot Federal de Alagoas - IFAL"
     ]
@@ -334,7 +340,10 @@ const dados = {
   "PA": {
     "nome": "Pará",
     "instituicoes": [
-      "UFPA",
+          {
+        "nome": "Universidade Federal do Pará - UFPA",
+        "url": "https://portal.ufpa.br"
+      },
       "UEPA",
       "IFPA"
     ]
@@ -342,7 +351,10 @@ const dados = {
   "PB": {
     "nome": "Paraíba",
     "instituicoes": [
-      "Universidade Federal de Campina Grande - UFCG",
+      {
+        "nome": "Universidade Federal de Campina Grande - UFCG",
+        "url": "https://www.ufcg.edu.br"
+      },
       "Universidade Federal da Paraíba - UFPB",
       "Universidade Estaduaal da Paraíba - UEPB",
       "Instituto Federal de Educação, Ciência e Tecnologia da Paraíba - IFPB",
@@ -472,7 +484,18 @@ function renderUF(uf) {
   const ul = document.createElement('ul');
   item.instituicoes.forEach(inst => {
     const li = document.createElement('li');
-    li.textContent = inst;
+    if (typeof inst === 'string') {
+      li.textContent = inst;
+    } else if (inst && inst.nome && inst.url) {
+      const a = document.createElement('a');
+      a.href = inst.url;
+      a.target = '_blank';
+      a.rel = 'noopener noreferrer';
+      a.textContent = inst.nome;
+      li.appendChild(a);
+    } else {
+      li.textContent = String(inst);
+    }
     ul.appendChild(li);
   });
   content.innerHTML = '';
@@ -482,7 +505,7 @@ function renderUF(uf) {
 function resetPanel() {
   stateName.textContent = 'Selecione um estado';
   stateDesc.textContent = 'Passe o mouse sobre o mapa para ver a lista de instituições. Clique em um estado para deixar os dados fixos.';
-  content.innerHTML = '<p style="color:#5f7483; line-height:1.6; margin:0;">Este modelo já inclui todas as UFs. As listas de instituições estão em um objeto JavaScript e podem ser editadas facilmente.</p>';
+ 
 }
 
 function setActive(uf) {
